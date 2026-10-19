@@ -8,7 +8,6 @@ class BrandWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
-      // height: 5,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(12),color: Colors.white),
       child: Center(child: CustomText(text: text, fontSize: 14, fontWeight: FontWeight.w600)),
     );

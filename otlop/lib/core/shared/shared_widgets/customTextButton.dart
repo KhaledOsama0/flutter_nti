@@ -7,9 +7,11 @@ class CustomTextButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+     this.size,
   });
   final String text;
   final VoidCallback onPressed;
+    final double? size;
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -18,6 +20,7 @@ class CustomTextButton extends StatelessWidget {
         text: text,
         fontWeight: FontWeight.w600,
         color: AppColors.primaryColor,
+        fontSize: size??14,
       ),
     );
   }

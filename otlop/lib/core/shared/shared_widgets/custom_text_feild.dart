@@ -10,27 +10,32 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.textInputType,
     this.prefixIcon,
+    this.widget,
+    required this.isSuffixIcon,
+    this.width,
   });
+  final double? width;
   final TextEditingController controller;
   final IconData? prefixIcon;
   final String hint;
   final IconData? suffixIcon;
   final TextInputType? textInputType;
+  final Widget? widget;
+  final bool isSuffixIcon;
   @override
   Widget build(BuildContext context) {
     return TextField(
-      
       scrollPadding: EdgeInsets.all(20),
       dragStartBehavior: DragStartBehavior.start,
       controller: controller,
       keyboardType: textInputType,
-      
+
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Colors.white),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -38,25 +43,31 @@ class CustomTextField extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Colors.white),
         ),
-        
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
-        suffixIcon: Padding(
-          padding: const EdgeInsets.only(right: 10),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white),
+        ),
 
-          child: IconButton.filled(
-            padding: EdgeInsets.zero,
-            style: IconButton.styleFrom(backgroundColor: AppColors.secondaryColor),
-            icon: Icon(suffixIcon, color: AppColors.primaryColor),
-            onPressed: () {},
-            
-          ),
-        ),
-        contentPadding: EdgeInsets.only(top:20,bottom: 20),
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+        suffixIcon: isSuffixIcon
+            ? Padding(
+                padding: const EdgeInsets.only(right: 10),
+
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  style: IconButton.styleFrom(
+                    backgroundColor: AppColors.secondaryColor,
+                  ),
+                  icon: Icon(suffixIcon, color: AppColors.primaryColor),
+                  onPressed: () {},
+                ),
+              )
+            : null,
+        contentPadding: EdgeInsets.only(top: 20, bottom: 20),
         prefixIcon: Icon(prefixIcon),
-        
       ),
     );
   }

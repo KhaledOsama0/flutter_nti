@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:otlop/core/shared/colors/app_colors.dart';
+import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
 
 class AuthFormWidget extends StatelessWidget {
   const AuthFormWidget({
@@ -18,6 +20,7 @@ class AuthFormWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        CustomText(text: title,color:AppColors.primaryColor),
         Gap(5),
         Container(
           width: double.infinity,
