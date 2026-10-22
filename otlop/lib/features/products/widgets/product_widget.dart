@@ -25,66 +25,63 @@ class ProductWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
+                width: 155,
+                height: 167,
+              ),
+            ),
+        
+            Gap(7),
+            CustomText(
+              text: title,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primaryColor,
+            ),
+            Gap(4),
+        
+            CustomText(
+              maxLines: 2,
+              text: subtitle,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+            Row(
+              textBaseline: TextBaseline.alphabetic,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              children: [
+                CustomText(
+                  text: price,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                 ),
-                child: Image.asset(
-                  image,
-                  fit: BoxFit.contain,
-                  width: 155,
-                  height: 167,
+                CustomText(
+                  text: ' EGP',
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.grey.shade400,
                 ),
-              ),
-          
-              Gap(7),
-              CustomText(
-                text: title,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.primaryColor,
-              ),
-              Gap(4),
-          
-              CustomText(
-                maxLines: 2,
-                text: subtitle,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-              Row(
-                textBaseline: TextBaseline.alphabetic,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                children: [
-                  CustomText(
-                    text: price,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                Spacer(),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.add, color: Colors.white),
+                  style: IconButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
                   ),
-                  CustomText(
-                    text: ' EGP',
-                    fontSize: 12,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.grey.shade400,
-                  ),
-                  Spacer(),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.add, color: Colors.white),
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

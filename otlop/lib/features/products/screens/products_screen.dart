@@ -1,21 +1,67 @@
+﻿import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text_feild.dart';
 import 'package:otlop/core/shared/shared_widgets/navigation.dart';
-import 'package:otlop/features/products/data/model/brand_model.dart';
-import 'package:otlop/features/products/data/model/category_model.dart';
-import 'package:otlop/features/products/data/model/products_model.dart';
 import 'package:otlop/features/products/screens/products_details.dart';
 import 'package:otlop/features/products/widgets/brand_widget.dart';
 import 'package:otlop/features/products/widgets/category_widget.dart';
 import 'package:otlop/features/products/widgets/header_home_widget.dart';
 import 'package:otlop/features/products/widgets/product_widget.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List products = [];
+  getProducts() async {
+    final dio = Dio();
+    final response = await dio.get(
+      'https://talabat639.runasp.net/api/Products',
+    );
+    setState(() {
+      products = response.data['data'];
+    });
+  }
+
+  List categories = [];
+  getCategories() async {
+    final dio = Dio();
+    final response = await dio.get(
+      'https://talabat639.runasp.net/api/Products/categories',
+    );
+    setState(() {
+      categories = response.data;
+    });
+  }
+
+  List brands = [];
+  getBrands() async {
+    final dio = Dio();
+    final response = await dio.get(
+      'https://talabat639.runasp.net/api/Products/brands',
+    );
+    setState(() {
+      brands = response.data;
+    });
+  }
+
+  @override
+  void initState() {
+    getProducts();
+    getCategories();
+    getBrands();
+    super.initState();
+  }
+
   final TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +110,8 @@ class HomeScreen extends StatelessWidget {
                   suffixIcon: Icons.filter_list_alt,
                   prefixIcon: Icons.search,
                   controller: searchController,
-                  hint: 'Search coffee, cakes, donuts...', isSuffixIcon: true,
+                  hint: 'Search coffee, cakes, donuts...',
+                  isSuffixIcon: true,
                 ),
                 Gap(20),
                 Container(
@@ -140,12 +187,12 @@ your first order''',
                   height: 110,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: CategoryModel.categories.length,
+                    itemCount: categories.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: CategoryWidget(
-                        image: CategoryModel.categories[index].image,
-                        title: CategoryModel.categories[index].title,
+                        image: categories[index]['pictureUrl'],
+                        title: categories[index]['name'],
                       ),
                     ),
                   ),
@@ -161,10 +208,12 @@ your first order''',
                   height: 50,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: BrandModel.brands.length,
+                    itemCount: brands.length,
                     itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(right: 16.0),
-                      child: BrandWidget(text: BrandModel.brands[index].text),
+                      child: BrandWidget(
+                        text: brands[index]['name']
+                      ),
                     ),
                   ),
                 ),
@@ -176,28 +225,23 @@ your first order''',
                 ),
                 Gap(15),
 
-                SizedBox(
-                  height: 800,
-                  child: GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: .55,
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
-                    itemCount: ProductsModel.products.length,
-                    itemBuilder: (context, index) => ProductWidget(
-                      image: ProductsModel.products[index].image,
-                      title: ProductsModel.products[index].title,
-                      subtitle: ProductsModel.products[index].subtitle,
-                      price: ProductsModel.products[index].price,
-                      onTap: () => NavigateTo(
-                        context: context,
-                        screen: ProductsDetails(),
-                      ),
-                    ),
+                GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: .55,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) => ProductWidget(
+                    image: products[index]['pictureUrl'],
+                    title: products[index]['name'],
+                    subtitle: products[index]['description'],
+                    price: products[index]['price'].toString(),
+                    onTap: () =>
+                        NavigateTo(context: context, screen: ProductsDetails()),
                   ),
                 ),
               ],
