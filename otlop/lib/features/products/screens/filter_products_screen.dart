@@ -2,15 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
-import 'package:otlop/core/shared/shared_widgets/navigation.dart';
-import 'package:otlop/features/products/data/model/products_model.dart';
-import 'package:otlop/features/products/screens/filter_by_category.dart';
+import 'package:otlop/features/products/data/api/remote_api.dart';
+
 import 'package:otlop/features/products/widgets/filter_by_category_section.dart';
 import 'package:otlop/features/products/widgets/product_widget.dart';
 import 'package:otlop/features/products/widgets/search_section.dart';
 
-class FilterProductsScreen extends StatelessWidget {
-  const FilterProductsScreen({super.key});
+class FilterProductsScreen extends StatefulWidget {
+  const FilterProductsScreen({
+    super.key,
+    required this.id,
+    required this.categoryName,
+  });
+  final String categoryName;
+  final int id;
+
+  @override
+  State<FilterProductsScreen> createState() => _FilterProductsScreenState();
+}
+
+class _FilterProductsScreenState extends State<FilterProductsScreen> {
+  bool isLoading = true;
+  List products = [];
+  @override
+  void initState() {
+    super.initState();
+    RemoteProductApi().getProductsByCategory(widget.id).then((val) {
+      setState(() {
+        products = val;
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +57,7 @@ class FilterProductsScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back_ios_new),
         ),
         title: CustomText(
-          text: 'Costa',
+          text: widget.categoryName,
           fontSize: 20,
           fontWeight: FontWeight.w800,
           color: Colors.black,
@@ -51,33 +74,37 @@ class FilterProductsScreen extends StatelessWidget {
               Gap(20),
               FilterByCategorySection(),
               Gap(30),
-              CustomText(text: '4 items', color: Colors.grey.shade400),
-              Gap(20),
-              GestureDetector(
-                onTap: () {
-                  NavigateTo(context: context, screen: FilterByCategory());
-                },
-                child: SizedBox(
-                  height: 650,
-                  child: GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 0.66,
-                    ),
-                    itemCount: ProductsModel.filterProducts.length,
-                    itemBuilder: (context, index) => ProductWidget(
-                      image: ProductsModel.filterProducts[index].image,
-                      title: ProductsModel.filterProducts[index].title,
-                      subtitle: ProductsModel.filterProducts[index].subtitle,
-                      price: ProductsModel.filterProducts[index].price,
-                    ),
-                  ),
-                ),
+              CustomText(
+                text: products.length == 0
+                    ? "No products found"
+                    : '${products.length.toString()} items',
+                color: Colors.grey.shade400,
               ),
+              Gap(20),
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryColor,
+                      ),
+                    )
+                  : GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: .55,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: products.length,
+                      itemBuilder: (context, index) => ProductWidget(
+                        text: products[index]['category'],
+                        image: products[index]['pictureUrl'],
+                        title: products[index]['name'],
+                        subtitle: products[index]['description'],
+                        price: products[index]['price'].toString(),
+                      ),
+                    ),
             ],
           ),
         ),

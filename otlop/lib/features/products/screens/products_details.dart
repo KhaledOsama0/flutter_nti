@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
-import 'package:otlop/core/shared/shared_widgets/navigation.dart';
-import 'package:otlop/features/products/screens/filter_products_screen.dart';
+
 import 'package:otlop/features/products/widgets/product_tag_widget.dart';
 
 class ProductsDetails extends StatelessWidget {
@@ -136,7 +135,7 @@ Light, pillowy and irresistibly sweet.''',
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {NavigateTo(context: context, screen: FilterProductsScreen());},
+                      onTap: () {},
                       child: Container(
                         width: 212,
                         height: 60,

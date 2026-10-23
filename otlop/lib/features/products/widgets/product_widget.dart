@@ -11,8 +11,9 @@ class ProductWidget extends StatelessWidget {
     required this.subtitle,
     required this.price,
     this.onTap,
+    required this.text
   });
-  final String image, title, subtitle, price;
+  final String image, title, subtitle, price,text;
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
@@ -28,17 +29,34 @@ class ProductWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-              ),
-              child: Image.network(
-                image,
-                fit: BoxFit.cover,
-                width: 155,
-                height: 167,
-              ),
+           Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    width: 170,
+                    height: 167,
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(221, 94, 93, 93),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(child: CustomText(text: text,color: Colors.white,))
+                )
+                ),
+              ],
             ),
         
             Gap(7),

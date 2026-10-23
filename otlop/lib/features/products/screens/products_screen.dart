@@ -1,10 +1,14 @@
-﻿import 'package:dio/dio.dart';
+﻿import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text_feild.dart';
 import 'package:otlop/core/shared/shared_widgets/navigation.dart';
+import 'package:otlop/features/products/data/api/remote_api.dart';
+import 'package:otlop/features/products/screens/filter_by_category.dart';
+import 'package:otlop/features/products/screens/filter_products_screen.dart';
 import 'package:otlop/features/products/screens/products_details.dart';
 import 'package:otlop/features/products/widgets/brand_widget.dart';
 import 'package:otlop/features/products/widgets/category_widget.dart';
@@ -19,45 +23,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isLoading = true;
   List products = [];
-  getProducts() async {
-    final dio = Dio();
-    final response = await dio.get(
-      'https://talabat639.runasp.net/api/Products',
-    );
-    setState(() {
-      products = response.data['data'];
-    });
-  }
-
   List categories = [];
-  getCategories() async {
-    final dio = Dio();
-    final response = await dio.get(
-      'https://talabat639.runasp.net/api/Products/categories',
-    );
-    setState(() {
-      categories = response.data;
-    });
-  }
-
   List brands = [];
-  getBrands() async {
-    final dio = Dio();
-    final response = await dio.get(
-      'https://talabat639.runasp.net/api/Products/brands',
-    );
-    setState(() {
-      brands = response.data;
-    });
-  }
 
   @override
   void initState() {
-    getProducts();
-    getCategories();
-    getBrands();
     super.initState();
+    RemoteProductApi().getProducts().then(
+      (value) {
+        setState(() {
+          isLoading = false;
+          products = value;
+        });
+      },
+      onError: (error) {
+        isLoading = false;
+        log(error.toString());
+      },
+    );
+    RemoteProductApi().getCategories().then(
+      (value) {
+        setState(() {
+          isLoading = false;
+          categories = value;
+        });
+      },
+      onError: (error) {
+        isLoading = false;
+        log(error.toString());
+      },
+    );
+    RemoteProductApi().getBrands().then(
+      (value) {
+        setState(() {
+          isLoading = false;
+          brands = value;
+        });
+      },
+      onError: (error) {
+        isLoading = false;
+        log(error.toString());
+      },
+    );
   }
 
   final TextEditingController searchController = TextEditingController();
@@ -185,17 +194,34 @@ your first order''',
                 Gap(15),
                 SizedBox(
                   height: 110,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: CategoryWidget(
-                        image: categories[index]['pictureUrl'],
-                        title: categories[index]['name'],
-                      ),
-                    ),
-                  ),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: GestureDetector(
+                              onTap: () {
+                                NavigateTo(
+                                  context: context,
+                                  screen: FilterProductsScreen(
+                                    id:categories[index]['id'],
+                                    categoryName: categories[index]['name'],
+                                  ),
+                                );
+                              },
+                              child: CategoryWidget(
+                                image: categories[index]['pictureUrl'],
+                                title: categories[index]['name'],
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
                 Gap(15),
                 CustomText(
@@ -206,16 +232,29 @@ your first order''',
                 Gap(15),
                 SizedBox(
                   height: 50,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: brands.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: BrandWidget(
-                        text: brands[index]['name']
-                      ),
-                    ),
-                  ),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: brands.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: InkWell(
+                              onTap: () => NavigateTo(
+                                context: context,
+                                screen: FilterByCategory(
+                                  id: brands[index]['id'],
+                                  name: brands[index]['name'],
+                                ),
+                              ),
+                              child: BrandWidget(text: brands[index]['name']),
+                            ),
+                          ),
+                        ),
                 ),
                 Gap(15),
                 CustomText(
@@ -225,25 +264,34 @@ your first order''',
                 ),
                 Gap(15),
 
-                GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: .55,
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) => ProductWidget(
-                    image: products[index]['pictureUrl'],
-                    title: products[index]['name'],
-                    subtitle: products[index]['description'],
-                    price: products[index]['price'].toString(),
-                    onTap: () =>
-                        NavigateTo(context: context, screen: ProductsDetails()),
-                  ),
-                ),
+                isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      )
+                    : GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: .55,
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) => ProductWidget(
+                          text: products[index]['category'],
+                          image: products[index]['pictureUrl'],
+                          title: products[index]['name'],
+                          subtitle: products[index]['description'],
+                          price: products[index]['price'].toString(),
+                          onTap: () => NavigateTo(
+                            context: context,
+                            screen: ProductsDetails(),
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otlop/features/auth/login/screens/login_screen.dart';
+import 'package:otlop/features/products/screens/products_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,7 +12,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: HomeScreen(),
     );
   }
 }

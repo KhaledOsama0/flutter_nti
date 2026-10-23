@@ -1,24 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
+import 'package:otlop/features/products/data/api/remote_api.dart';
 import 'package:otlop/features/products/data/model/products_model.dart';
 import 'package:otlop/features/products/widgets/product_widget.dart';
 
-class FilterByProductsSection extends StatelessWidget {
+class FilterByProductsSection extends StatefulWidget {
     
     final double? height;
-    final List <ProductsModel> product;
-  const FilterByProductsSection({super.key, this.height, required this.product});
+    final int id;
+  const FilterByProductsSection({super.key, this.height,  required this.id, required List<ProductsModel> product});
 
+  @override
+  State<FilterByProductsSection> createState() => _FilterByProductsSectionState();
+}
+
+class _FilterByProductsSectionState extends State<FilterByProductsSection> {
+  List  products = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    
+    super.initState();
+    RemoteProductApi().getProductsByCategory(widget.id).then((val){
+      setState(() {
+        products = val;
+        isLoading = false;
+      });
+    });
+    }
   @override
   Widget build(BuildContext context,) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(text: '${product.length} items', color: Colors.grey.shade400),
+        CustomText(text: '${products.length} items', color: Colors.grey.shade400),
         Gap(20),
         SizedBox(
-          height:height?? 650,
+          height:widget.height?? 650,
           child: GridView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -28,12 +47,13 @@ class FilterByProductsSection extends StatelessWidget {
               crossAxisSpacing: 10,
               childAspectRatio: 0.66,
             ),
-            itemCount: product.length,
+            itemCount: products.length,
             itemBuilder: (context, index) => ProductWidget(
-              image: product[index].image,
-              title: product[index].title,
-              subtitle: product[index].subtitle,
-              price: product[index].price,
+              text: products[index]['category'],
+              image: products[index].image,
+              title: products[index].title,
+              subtitle: products[index].subtitle,
+              price: products[index].price,
             ),
           ),
         ),
