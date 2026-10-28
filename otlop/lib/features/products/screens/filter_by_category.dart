@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
 import 'package:otlop/core/shared/shared_widgets/navigation.dart';
-import 'package:otlop/features/products/data/api/remote_api.dart';
+import 'package:otlop/features/products/data/api/remote_products_api.dart';
 import 'package:otlop/features/products/screens/products_details.dart';
 import 'package:otlop/features/products/widgets/filter_by_category_section.dart';
 import 'package:otlop/features/products/widgets/product_widget.dart';
@@ -39,7 +39,10 @@ class _FilterByCategoryState extends State<FilterByCategory> {
           },
         );
   }
-
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final TextEditingController _controller = TextEditingController();
@@ -103,7 +106,7 @@ class _FilterByCategoryState extends State<FilterByCategory> {
                         onTap: () => NavigateTo(
                           context: context,
                           screen: ProductsDetails(),
-                        ),
+                        ), id: brands[index]['id'], quantity: 1
                       ),
                     ),
             ],

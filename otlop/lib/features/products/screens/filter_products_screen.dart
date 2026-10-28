@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:otlop/core/shared/colors/app_colors.dart';
 import 'package:otlop/core/shared/shared_widgets/custom_text.dart';
-import 'package:otlop/features/products/data/api/remote_api.dart';
+import 'package:otlop/features/products/data/api/remote_products_api.dart';
 
 import 'package:otlop/features/products/widgets/filter_by_category_section.dart';
 import 'package:otlop/features/products/widgets/product_widget.dart';
@@ -34,7 +34,10 @@ class _FilterProductsScreenState extends State<FilterProductsScreen> {
       });
     });
   }
-
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final TextEditingController _controller = TextEditingController();
@@ -102,7 +105,7 @@ class _FilterProductsScreenState extends State<FilterProductsScreen> {
                         image: products[index]['pictureUrl'],
                         title: products[index]['name'],
                         subtitle: products[index]['description'],
-                        price: products[index]['price'].toString(),
+                        price: products[index]['price'].toString(), id: products[index]['id'], quantity:1,
                       ),
                     ),
             ],
